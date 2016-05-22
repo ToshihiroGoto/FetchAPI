@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Fetch API</title>
+    
+    <style>
+        body, p, section, output, button{
+            margin: 0;
+            padding: 0;
+        }
+        body { padding: 16px; font-family: sans-serif; }
+        section { margin-bottom: 44px; }
+        p { font-weight: bold; margin-bottom: 16px; }
+        output { margin-bottom: 16px; display: block; }
+        img { margin-bottom: 16px; display: block; }
+        button { padding: 2px; }
+    </style>
+    
+</head>
+<body>
+    <section>
+        <p>プレーンテキストの取得</p>
+        <output id="output-text"></output>
+        <button id="fetch-text">ふぇっち！</button>
+    </section>
+    
+     <section>
+        <p>JSON の取得</p>
+        <output id="output-json"></output>
+        <button id="fetch-json">ふぇっち！</button>
+    </section>
+    
+    <section>
+        <p>BLOB の取得（今回は画像）</p>
+        <img id="output-blob">
+        <button id="fetch-blob">ふぇっち！</button>
+    </section>
+    
+    <section>
+        <p>ArrayBuffer の取得（今回は画像）</p>
+        <img id="output-buffer">
+        <button id="fetch-arrayBuffer">ふぇっち！</button>
+    </section>
+    
+    <section>
+        <p>他のドメインから no-cors 画像を取得</p>
+        <img id="output-cors">
+        <button id="fetch-cors">ふぇっち！</button>
+    </section>
+    
+    <script>
+        var t = document.getElementById("fetch-text")
+        var j = document.getElementById("fetch-json")
+        var b = document.getElementById("fetch-blob")
+        var a = document.getElementById("fetch-arrayBuffer")
+        var c = document.getElementById("fetch-cors")
+                        
+        var o_t = document.getElementById("output-text")
+        var o_j = document.getElementById("output-json")
+        var o_b = document.getElementById("output-blob")
+        var o_a = document.getElementById("output-buffer")
+        var o_c = document.getElementById("output-cors")
+                
+        t.addEventListener("click", fetchText)
+        j.addEventListener("click", fetchJson)
+        b.addEventListener("click", fetchBlob)
+        a.addEventListener("click", fetchArrayBuffer)
+        c.addEventListener("click", fetchcors)
+        
+        function fetchText(){
+            fetch("fetch.txt").then(function(response) {
+                return response.text();
+            }).then(function(text) {
+                o_t.innerText = text
+            });
+        }
+        
+        function fetchJson(){
+            fetch("fetch.json").then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                o_j.innerText = JSON.stringify(json)
+            });
+        }
+        
+        function fetchBlob(){
+            fetch('fetch.png').then(function(response) {
+                return response.blob();
+            }).then(function(blob) {
+                var objectURL = URL.createObjectURL(blob);
+                o_b.src = objectURL;
+            });
+        }
+        
+        function fetchArrayBuffer(){
+            fetch('fetch.png').then(function(response) {
+                return response.arrayBuffer();
+            }).then(function(buffer) {
+                var blob = new Blob([buffer], { type: "image/png" })
+                var objectURL = URL.createObjectURL(blob);
+                o_a.src = objectURL;
+            });
+        }
+        
+        function fetchcors(){
+            var headers = new Headers();
+
+            var init = { method: 'GET',
+                        headers: headers,
+                        mode: 'no-cors',
+                        cache: 'default' };
+
+            var request = new Request('https://az813057.vo.msecnd.net/images/device-family.b414c2a.png', init);
+
+            fetch(request, init).then(function(response) {
+                return response.blob();
+            }).then(function(blob) {
+                var objectURL = URL.createObjectURL(blob);
+                o_c.src = objectURL;
+            });
+        }
+        
+    </script>
+</body>
+</html>
